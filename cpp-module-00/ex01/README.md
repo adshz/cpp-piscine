@@ -6,10 +6,19 @@
 
 1. add a person's contact
 2. search a person's contact
-3. print all contacts
-4. delete a person's contact
-5. save into a file
-6. load a file
+
+
+
+
+
+----DO NOT OVERENGINEERING AS WE ARE JUST DOING EXERCISES----
+
+
+
+1. print all contacts
+2. delete a person's contact
+3. save into a file
+4. load a file
 
 
 We need to think abouot PhoneBook as a software product. 
