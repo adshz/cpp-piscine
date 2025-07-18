@@ -119,8 +119,8 @@ bool Account::makeWithdrawal(int withdrawal) {
         return (false);
     } else {
         this->_amount -= withdrawal;
-        Account::_totalAmount -= withdrawal;
         this->_nbWithdrawals++;
+        Account::_totalAmount -= withdrawal;
         Account::_totalNbWithdrawals++;
         std::cout << withdrawal << ";" << "amount:" << this->_amount << ";"
                   << "nb_withdrawals:" << this->_nbWithdrawals << std::endl;
