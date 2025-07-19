@@ -1,22 +1,23 @@
-NAME = moarbrainz
+NAME	= violence
 
 CC = c++
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 
 
 SRCS = \
 		main.cpp \
-		Zombie.cpp \
-		zombieHorde.cpp
+		HumanA.cpp \
+		HumanB.cpp \
+		Weapon.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)
 
 %.o:%.cpp
-	@$(CC) $(CFLAGS) -c $< -o $@ -I .
-
+	@$(CC) $(CFLAGS) -c $< -o $@
+	
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) -o $(@)
+	@$(CC) $(CFLAGS) $^ -o $@
 	@echo "BUILD FINISH"
 
 clean:
