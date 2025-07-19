@@ -2,51 +2,72 @@
 #include <iostream>
 #include <string>
 
-void replace(char **argv) {
-  std::string filename(argv[1]);
-  std::string s1(argv[2]);
-  std::string s2(argv[3]);
+// result.replace(pos, target.length(), replacement) but .replace is a forbidden
+// function
+std::string replaceInLine(const std::string &line, const std::string &target,
+                          const std::string &replacement) {
+  std::string result = line;
+  std::size_t pos = 0;
 
-  std::ifstream ifs(filename);
-  if (ifs.good()) {
-    if (ifs.peek() == std::ifstream::traits_type::eof()) {
-      std::cout << "Error: File is empty" << std::endl;
-    } else {
-      std::ofstream ofs(filename.append(".replace").data());
-      while (ifs.good() && ofs.good()) {
-        std::string line;
-        std::size_t found;
-        std::getline(ifs, line);
-        found = line.find(s1, 0);
-        while (found != std::string::npos) {
-          line.erase(found, s1.length());
-          line.insert(found, s2);
-          found = line.find(s1, found + s2.length());
-        }
-        ofs << line;
-        if (ifs.eof()) {
-          break;
-        }
-        ofs << std::endl;
-      }
-      ifs.close();
-      ofs.close();
-    }
-  } else {
-    std::cout << "Error: " << strerror(errno) << std::endl;
+  while ((pos = result.find(target, pos)) != std::string::npos) {
+    result.erase(pos, target.length());
+    result.insert(pos, replacement);
+    pos += replacement.length();
   }
+  return result;
+}
+
+bool isFileValid(const std::string &filename, std::ifstream &file) {
+  if (!file.good()) {
+    std::cout << "Error: Cannot open file " << filename << std::endl;
+    return false;
+  }
+  if (file.peek() == std::ifstream::traits_type::eof()) {
+    std::cout << "Error: Empty file" << std::endl;
+    return false;
+  }
+  return true;
+}
+
+void processFile(const std::string &filename, const std::string &target,
+                 const std::string &replacement) {
+  std::ifstream inputFile(filename);
+
+  if (!isFileValid(filename, inputFile)) {
+    return;
+  }
+  std::string outputFileName = filename + ".replace";
+  std::ofstream outputFile(outputFileName);
+
+  if (!outputFile) {
+    std::cout << "Error: Cannot create output file" << std::endl;
+    return;
+  }
+
+  std::string line;
+  while (std::getline(inputFile, line)) {
+    std::string processedLine = replaceInLine(line, target, replacement);
+    outputFile << processedLine << std::endl;
+  }
+  inputFile.close();
+  outputFile.close();
+  std::cout << "Replacement complete. Output savd to: " << outputFileName
+            << std::endl;
 }
 
 int main(int argc, char **argv) {
-  if (argc == 4) {
-    replace(argv);
-  } else {
-    std::cout << "Error: Usage: ./replace <filename> <string 1> <string 2> "
+  if (argc != 4) {
+    std::cout << "Error: Usage: ./replace <filename> <target> <replacement>"
               << std::endl;
-    std::cout << "Prompt1: Without arrow bracket <>" << std::endl;
-    std::cout << "Prompt2: <string 1> is the target pattern; <string 1> is the "
-                 "source pattern"
+    std::cout << "Note: <target> will be replaced with <replacement>"
               << std::endl;
+    return 1;
   }
+
+  std::string filename(argv[1]);
+  std::string target(argv[2]);
+  std::string replacement(argv[3]);
+
+  processFile(filename, target, replacement);
   return (0);
 }
