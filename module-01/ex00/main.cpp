@@ -1,24 +1,22 @@
-#include "main.hpp"
-
-#define LOG(x) std::cout << x << std::endl
+#include "Zombie.hpp"
 
 int main(void) {
-  LOG("CREATE ZOMBIE USING STACK ALLOCATION");
+  std::cout << "CREATE ZOMBIE USING STACK ALLOCATION" << std::endl;
   Zombie walkingDead("Foo");
   walkingDead.announce();
-  LOG("=================================");
-  LOG("");
+  std::cout << "=================================" << std::endl;
+  std::cout << "" << std::endl;
 
-  LOG("CREATE ZOMBIE USING randomChump");
+  std::cout << "CREATE ZOMBIE USING randomChump" << std::endl;
   randomChump("stackZombie");
-  LOG("=================================");
-  LOG("");
+  std::cout << "=================================" << std::endl;
+  std::cout << "" << std::endl;
 
-  LOG("CREATE ZOMBIE USING HEAP ALLOCATION");
+  std::cout << "CREATE ZOMBIE USING HEAP ALLOCATION" << std::endl;
   Zombie *theLastOfUs = newZombie("TLOU");
   (*theLastOfUs).announce();
 
   delete theLastOfUs;
-  LOG("==================END================");
+  std::cout << "==================END================" << std::endl;
   return (0);
 }

@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 SRCS = \
 		main.cpp \
-		Zombie.class.cpp \
+		Zombie.cpp \
 		newZombie.cpp \
 		randomChump.cpp 
 
