@@ -20,8 +20,8 @@ void replace(char **argv) {
         found = line.find(s1, 0);
         while (found != std::string::npos) {
           line.erase(found, s1.length());
-          line.insert(found, s1);
-          found = line.find(s1, found);
+          line.insert(found, s2);
+          found = line.find(s1, found + s2.length());
         }
         ofs << line;
         if (ifs.eof()) {
@@ -48,4 +48,5 @@ int main(int argc, char **argv) {
                  "source pattern"
               << std::endl;
   }
+  return (0);
 }
