@@ -14,12 +14,12 @@ Fixed::Fixed(Fixed const &src) {
   return;
 }
 
-Fixed::Fixed(int const n) : _raw(n << _fractionBits) {
+Fixed::Fixed(int const n) : _raw(n << _fractionalBits) {
   std::cerr << "Int constructor called." << std::endl;
   return;
 }
 
-Fixed::Fixed(float const n) : _raw(round_f(1 << _fractionBits)) {
+Fixed::Fixed(float const f) : _raw(roundf(f * (1 << _fractionalBits))) {
   std::cerr << "Float constructor called." << std::endl;
   return;
 }
