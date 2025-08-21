@@ -1,34 +1,19 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
+# Compiled object files
 *.o
 *.obj
+*.lo
 
-# Precompiled Headers
+# Precompiled headers
 *.gch
 *.pch
 
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
+# Compiled dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
+# Compiled static libraries
 *.a
 *.lib
 
@@ -37,5 +22,92 @@
 *.out
 *.app
 
-# debug information files
-*.dwo
+# Debug files
+*.dSYM/
+*.pdb
+*.idb
+*.ilk
+
+# Build directories
+build/
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dependency directories
+deps/
+vendor/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+
+# CMake build files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Autotools
+autom4te.cache
+*.in
+aclocal.m4
+compile
+config.guess
+config.h
+config.h.in
+config.log
+config.status
+config.sub
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
+
+# Test binaries
+test_*
+*_test
+*_unittest
+
+# Coverage files
+*.gcno
+*.gcda
+*.gcov
+
+# Package files
+*.tar.gz
+*.zip
+*.7z
+
+# Project specific (add your executable names here)
+# myapp
+# myproject
