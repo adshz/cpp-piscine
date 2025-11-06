@@ -22,7 +22,7 @@ class Bureaucrat
     void                decrementGrade(int i);
 
     static int const    highestGrade = 1;
-    static int const    lowestgrade = 150;
+    static int const    lowestGrade = 150;
 
     class GradeTooHighException: public std::exception {
       public:
