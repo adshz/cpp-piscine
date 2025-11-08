@@ -39,6 +39,6 @@ class Bureaucrat
     int               _grade;
 };
 
-std::ostream& operator<<(std::ostream & os, Bureaucrat const* obj);
+std::ostream& operator<<(std::ostream & os, Bureaucrat const& obj);
 
 #endif

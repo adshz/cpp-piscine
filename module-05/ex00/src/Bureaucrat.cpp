@@ -18,10 +18,10 @@ Bureaucrat::Bureaucrat(void): _name("John Snow"), _grade(Bureaucrat::lowestGrade
 	return ;
 }
 
-Bureaucrat::Bureaucrat(std::string const &name, int grade): 
+Bureaucrat::Bureaucrat(std::string const &name, int grade):
 	_name(name), _grade(Bureaucrat::lowestGrade)
 {
-	std::count << "Bureaucrat name/grade constructor called." << std::endl;
+	std::cout << "Bureaucrat name/grade constructor called." << std::endl;
 	if (grade < Bureaucrat::highestGrade)
 		throw(Bureaucrat::GradeTooHighException());
 	else if (grade > Bureaucrat::lowestGrade)
@@ -33,7 +33,7 @@ Bureaucrat::Bureaucrat(std::string const &name, int grade):
 
 Bureaucrat::~Bureaucrat(void)
 {
-	std::count << "Bureaucrat desctructor called." << std::endl;
+	std::cout << "Bureaucrat desctructor called." << std::endl;
 	return ;
 }
 
