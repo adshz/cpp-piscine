@@ -97,7 +97,7 @@ void	Bureaucrat::decrementGrade(int i)
 	return ;
 }
 
-void	Bureaucrat::signForm(Form & form) const
+void	Bureaucrat::signForm(Form& form) const
 {
 	try
 	{
@@ -106,7 +106,6 @@ void	Bureaucrat::signForm(Form & form) const
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Exception: " << e.what() << std::endl;
 		std::cout << RED << *this << " couldn't sign " << form << " because: " 
 			<< e.what()
 			<< RESET
@@ -114,14 +113,14 @@ void	Bureaucrat::signForm(Form & form) const
 	}
 }
 
-const char *	Bureaucrat::GradeTooHighException::what(void) const throw()
+const char*	Bureaucrat::GradeTooHighException::what(void) const throw()
 {
 	return ("Bureaucrat cannot get promoted anymore: too high");
 }
 
-const char *	Bureaucrat::GradeTooLowException::what(void) const throw()
+const char*	Bureaucrat::GradeTooLowException::what(void) const throw()
 {
-		return ("Bureaucrat cannot get demoted anymore: too low");
+	return ("Bureaucrat cannot get demoted anymore: too low");
 }
 
 std::ostream&	operator<<(std::ostream& os, Bureaucrat const &obj)
