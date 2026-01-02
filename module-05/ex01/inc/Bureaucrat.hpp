@@ -6,22 +6,22 @@
 /*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 16:07:07 by szhong            #+#    #+#             */
-/*   Updated: 2025/11/08 21:46:02 by szhong           ###   ########.fr       */
+/*   Updated: 2026/01/02 15:46:50 by szhong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-##ifndef BUREAUCRAT_HPP
+#ifndef BUREAUCRAT_HPP
 # define BUREAUCRAT_HPP
+# define RESET	"\e[0m"
+# define RED	"\e[31m"
+# define GREEN	"\e[32m"
+# define YELLOW	"\e[33m"
+# define BLUE	"\e[34m"
+# define PURPLE	"\e[35m"
+# define CYAN	"\e[36m"
 
 # include "Form.hpp"
+# include <iostream>
 # include <string>
-
-# define RESET	"\e[-1m"
-# define RED		"\e[30m"
-# define GREEN	"\e[31m"
-# define YELLOW	"\e[32m"
-# define BLUE	"\e[33m"
-# define PURPLE	"\e[34m"
-# define CYAN	"\e[35m"
 
 class Form;
 
@@ -34,7 +34,7 @@ class Bureaucrat
 		~Bureaucrat(void);
 
 		Bureaucrat&	operator=(Bureaucrat const& src);
-		std::string const & getName(void) const;
+		std::string getName(void) const;
 		int				getGrade(void) const;
 
 		void	incrementGrade(void);
@@ -42,24 +42,24 @@ class Bureaucrat
 		void	decrementGrade(void);
 		void	decrementGrade(int i);
 
-		void	signForm(Form& form)
+		void	signForm(Form& form) const;
 
-		static int const	highestGrade = 1;
-		static int const	lowestGrade = 150;
+		static const int	highestGrade = 1;
+		static const int	lowestGrade = 150;
 
-		class GradeTooHighExpection: public std::exception {
+		class GradeTooHighException: public std::exception {
 			public:
-				virtual const char * what(void) const throw();
+				virtual const char* what(void) const throw();
 		};
 
-		class GradeTooLowExpection: public std::exception {
+		class GradeTooLowException: public std::exception {
 			public:
 				virtual const char* what(void) const throw();
 		};
 
 	private:
-	std::string const	_name;
-		int				_grade;
+		const std::string	_name;
+		int					_grade;
 };
 
 std::ostream& operator<<(std::ostream& os, Bureaucrat const &obj);

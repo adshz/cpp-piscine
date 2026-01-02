@@ -6,7 +6,7 @@
 /*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 21:28:03 by szhong            #+#    #+#             */
-/*   Updated: 2025/11/08 21:40:38 by szhong           ###   ########.fr       */
+/*   Updated: 2026/01/02 15:45:59 by szhong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef FORM_HPP
@@ -20,10 +20,10 @@ class Bureaucrat;
 class Form
 {
 	private:
-		std::string const	_name;
+		const std::string	_name;
 		bool				_isSigned;
-		int const			_gradeRequiredToSign;
-		int const			_gradeRequiredToExecute;
+		const int			_gradeRequiredToSign;
+		const int			_gradeRequiredToExecute;
 
 	public:
 		Form(void);
@@ -32,7 +32,7 @@ class Form
 		Form& operator=(const Form& src);
 		~Form(void);
 
-		std::string const & getName() const;
+		std::string			getName() const;
 		bool				isSigned(void) const;
 		int					getGradeRequiredToSign(void) const;
 		int					getGradeRequiredToExecute(void) const;
@@ -47,6 +47,10 @@ class Form
 				virtual const char * what(void) const throw();
 		};
 		class AlreadySignedException: public std::exception {
+			public:
+				virtual const char * what(void) const throw();
+		};
+		class NotSignedException: public std::exception {
 			public:
 				virtual const char * what(void) const throw();
 		};

@@ -21,12 +21,12 @@ class ShrubberyCreationForm : public AForm
 
 	public:
 		ShrubberyCreationForm(void);
-		ShrubberyCreationForm(ShrubberyCreationForm const& src);
-		ShrubberyCreationForm(std::string const& target);
-		ShrubberyCreationForm& operator=(ShrubberyCreationForm const& src);
+		ShrubberyCreationForm(const ShrubberyCreationForm& src);
+		ShrubberyCreationForm(const std::string& target);
+		ShrubberyCreationForm& operator=(const ShrubberyCreationForm& src);
 		~ShrubberyCreationForm(void);
 
-		std::string const&	getTarget(void) const;
+		const std::string&	getTarget(void) const;
 
 	protected:
 		void	executeAction(void) const;

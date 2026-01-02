@@ -21,7 +21,7 @@ AForm::AForm(void)
 {
 }
 
-AForm::AForm(AForm const& src)
+AForm::AForm(const AForm& src)
 	: _name(src._name)
 	, _isSigned(src._isSigned)
 	, _gradeToSign(src._gradeToSign)

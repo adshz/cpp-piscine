@@ -6,27 +6,33 @@
 /*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/08 21:40:47 by szhong            #+#    #+#             */
-/*   Updated: 2025/11/08 22:06:13 by szhong           ###   ########.fr       */
+/*   Updated: 2026/01/02 15:51:03 by szhong           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "Bureaucrat.hpp"
 #include <iostream>
 
-Bureaucrat::Bureaucrat(void): _name("David Zhong"), _grade(Bureaucrat::lowestGrade)
+Bureaucrat::Bureaucrat(void)
+	: _name("David Zhong")
+	, _grade(Bureaucrat::lowestGrade)
 {
-	std::cout << CYAN "Bureaucrat default constructor called" RESET << std::endl;
+	std::cout << CYAN "Bureaucrat::default constructor called" RESET << std::endl;
 	return ;
 }
 
-Bureaucrat::Bureaucrat(Bureaucrat const & src): _name(src.name), _grade(src.grade)
+Bureaucrat::Bureaucrat(const Bureaucrat& src)
+	: _name(src._name)
+	, _grade(src._grade)
 {
-	std::cout << CYAN "Bureaucrat copy constructor called." RESET << std::endl;
+	std::cout << CYAN "Bureaucrat::copy constructor called." RESET << std::endl;
 	return ;
 }
 
-Bureaucrat::Bureaucrat(std::string const& name, int grade): _name(name), _grade(Bureaucrat::lowestGrade)
+Bureaucrat::Bureaucrat(const std::string& name, int grade)
+	: _name(name)
+	, _grade(Bureaucrat::lowestGrade)
 {
-	std::cout << CYAN "Bureaucrat constructor with parameters called." RESET << std::endl;
+	std::cout << CYAN "Bureaucrat::constructor with parameters called." RESET << std::endl;
 	if (grade < Bureaucrat::highestGrade)
 		throw(Bureaucrat::GradeTooHighException());
 	else if (grade > Bureaucrat::lowestGrade)
@@ -38,18 +44,20 @@ Bureaucrat::Bureaucrat(std::string const& name, int grade): _name(name), _grade(
 
 Bureaucrat::~Bureaucrat(void)
 {
-	std::cout << CYAN "Bureaucrat desctructor called." RESET << std::endl;
+	std::cout << CYAN "Bureaucrat::desctructor called." RESET << std::endl;
 	return ;
 }
 
-Bureaucrat&		Bureaucrat::operator=(Bureaucrat const &src)
+Bureaucrat&		Bureaucrat::operator=(const Bureaucrat& src)
 {
-	std::cout << CYAN "Bureaucrat assignment operator overload called." RESET << std::endl;
+	std::cout << CYAN "Bureaucrat:: copy assignment operator called." RESET << std::endl;
+	if (this == &src)
+		return (*this);
 	this->_grade = src._grade;
 	return (*this);
 }
 
-std::string const & Bureaucrat::getName(void) const
+std::string Bureaucrat::getName(void) const
 {
 	return (this->_name);
 }
@@ -71,9 +79,12 @@ void	Bureaucrat::incrementGrade(int i)
 	else
 	{
 		this->_grade -= i;
-		std::cout << GREEN << *this << " grade is incremented by 
-			<< this->_grade << 
-			RESET << std::endl;
+		std::cout	<< GREEN 
+					<< *this 
+					<< " grade is incremented by "
+					<< this->_grade 
+					<< RESET 
+					<< std::endl;
 	}
 	return ;
 }
@@ -89,10 +100,13 @@ void	Bureaucrat::decrementGrade(int i)
 		return (throw(Bureaucrat::GradeTooLowException()));
 	else
 	{
-		this->grade += i;
-		std::cout << YELLOW << *this << "'s grade decremented by " 
-			this->_grade;
-			<< RESET << std::endl;
+		this->_grade += i;
+		std::cout	<< YELLOW 
+					<< *this 
+					<< "'s grade decremented by " 
+					<< this->_grade
+					<< RESET 
+					<< std::endl;
 	}
 	return ;
 }
@@ -102,14 +116,23 @@ void	Bureaucrat::signForm(Form& form) const
 	try
 	{
 		form.beSigned(*this);
-		std::cout << GREEN << *this << " signed " << form << RESET << std::endl;
+		std::cout	<< GREEN 
+					<< *this 
+					<< " signed " 
+					<< form 
+					<< RESET 
+					<< std::endl;
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << RED << *this << " couldn't sign " << form << " because: " 
-			<< e.what()
-			<< RESET
-			<< std::endl;
+		std::cout	<< RED 
+					<< *this 
+					<< " couldn't sign " 
+					<< form 
+					<< " because: " 
+					<< e.what()
+					<< RESET
+					<< std::endl;
 	}
 }
 

@@ -20,27 +20,27 @@ class Bureaucrat;
 class AForm
 {
 	private:
-		std::string const	_name;
+		const std::string	_name;
 		bool				_isSigned;
-		int const			_gradeToSign;
-		int const			_gradeToExecute;
+		const int			_gradeToSign;
+		const int			_gradeToExecute;
 
 	public:
 		AForm(void);
-		AForm(AForm const& src);
-		AForm(std::string const& name, int gradeToSign, int gradeToExecute);
-		AForm& operator=(AForm const& src);
+		AForm(const AForm& src);
+		AForm(const std::string& name, int gradeToSign, int gradeToExecute);
+		AForm& operator=(const AForm& src);
 		virtual ~AForm(void);
 
 		// Getters
-		std::string const&	getName(void) const;
+		const std::string&	getName(void) const;
 		bool				isSigned(void) const;
 		int					getGradeToSign(void) const;
 		int					getGradeToExecute(void) const;
 
 		// Actions
-		void	beSigned(Bureaucrat const& bureaucrat);
-		void	execute(Bureaucrat const& executor) const;
+		void	beSigned(const Bureaucrat& bureaucrat);
+		void	execute(const Bureaucrat& executor) const;
 
 		// Exceptions
 		class GradeTooHighException : public std::exception {
