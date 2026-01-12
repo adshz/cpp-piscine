@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 09: STL - Deep Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 { color: #1a237e; border-bottom: 3px solid #3f51b5; padding-bottom: 10px; }
+        h2 { color: #283593; margin-top: 40px; }
+        h3 { color: #303f9f; }
+        .mermaid { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #3f51b5; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        code { background: #e8eaf6; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; }
+        pre { background: #263238; color: #aed581; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .section { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .note { background: #fff3e0; border-left: 4px solid #ff9800; padding: 10px 15px; margin: 10px 0; }
+        .success { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 10px 15px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Module 09: STL - Deep Analysis</h1>
+
+    <div class="section">
+        <h2>1. Module Overview</h2>
+        <div class="mermaid">
+mindmap
+  root((Module 09: STL))
+    Containers Used
+      std::map
+        Associative Container
+        Key-Value Pairs
+        O log n lookup
+      std::stack
+        Container Adapter
+        LIFO Structure
+        O 1 operations
+      std::vector
+        Sequence Container
+        Dynamic Array
+        O 1 access
+      std::deque
+        Sequence Container
+        Double-ended Queue
+        O 1 at ends
+    Exercises
+      ex00: Bitcoin Exchange
+      ex01: RPN Calculator
+      ex02: Merge-Insert Sort
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Container Strategy</h2>
+        <div class="mermaid">
+flowchart TB
+    subgraph "Container Selection Strategy"
+        A[Exercise Requirements] --> B{Need Key-Value Lookup?}
+        B -->|Yes| C[std::map]
+        B -->|No| D{Need LIFO Access?}
+        D -->|Yes| E[std::stack]
+        D -->|No| F{Need Random Access?}
+        F -->|Yes| G[std::vector / std::deque]
+    end
+
+    subgraph "Final Allocation"
+        C --> H[ex00: Bitcoin Exchange]
+        E --> I[ex01: RPN Calculator]
+        G --> J[ex02: PmergeMe]
+    end
+
+    style C fill:#e1f5fe
+    style E fill:#fff3e0
+    style G fill:#e8f5e9
+        </div>
+
+        <table>
+            <tr><th>Exercise</th><th>Container</th><th>Reason</th></tr>
+            <tr><td>ex00</td><td><code>std::map</code></td><td>Date→price mapping with <code>lower_bound()</code> for nearest date lookup in O(log n)</td></tr>
+            <tr><td>ex01</td><td><code>std::stack</code></td><td>RPN naturally uses LIFO - push operands, pop for operations</td></tr>
+            <tr><td>ex02</td><td><code>std::vector</code> + <code>std::deque</code></td><td>Random access for binary search insertion, compare performance</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>3. Exercise 00: Bitcoin Exchange</h2>
+
+        <h3>Class Architecture</h3>
+        <div class="mermaid">
+classDiagram
+    class BitcoinExchange {
+        -std::map~string, double~ _database
+        +loadDatabase(filename) bool
+        +processInputFile(filename) void
+        -isValidDate(date) bool
+        -isValidValue(value, result) bool
+        -getExchangeRate(date) double
+        -trim(str) string
+    }
+        </div>
+
+        <h3>Data Flow</h3>
+        <div class="mermaid">
+flowchart TD
+    subgraph "Initialization"
+        A[Program Start] --> B[Load data.csv]
+        B --> C{File Exists?}
+        C -->|No| D[Error]
+        C -->|Yes| E[Parse CSV]
+        E --> F["Store in std::map"]
+    end
+
+    subgraph "Processing"
+        F --> G[Read input line]
+        G --> H{Valid format?}
+        H -->|No| I[Error: bad input]
+        H -->|Yes| J{Valid date?}
+        J -->|No| K[Error: bad input]
+        J -->|Yes| L{Valid value?}
+        L -->|negative| M[Error: not positive]
+        L -->|> 1000| N[Error: too large]
+        L -->|OK| O[Get rate]
+    end
+
+    subgraph "Rate Lookup"
+        O --> P{Exact match?}
+        P -->|Yes| Q[Use rate]
+        P -->|No| R[Find lower_bound]
+        R --> S[Use previous date]
+        Q --> T[Output: date => value = result]
+        S --> T
+        T --> G
+    end
+        </div>
+
+        <h3>std::map lower_bound Visualization</h3>
+        <div class="mermaid">
+flowchart LR
+    subgraph "Database (Red-Black Tree)"
+        N1["2011-01-03: 0.3"]
+        N2["2011-01-09: 0.32"]
+        N3["2012-01-11: 7.1"]
+    end
+
+    subgraph "Query: 2011-01-05"
+        Q1["upper_bound('2011-01-05')"] --> Q2["Returns: 2011-01-09"]
+        Q2 --> Q3["--iterator"]
+        Q3 --> Q4["Returns: 2011-01-03"]
+        Q4 --> Q5["Rate: 0.3"]
+    end
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Exercise 01: RPN Calculator</h2>
+
+        <h3>Class Architecture</h3>
+        <div class="mermaid">
+classDiagram
+    class RPN {
+        -std::stack~int~ _stack
+        +evaluate(expr, result) bool
+        -isOperator(c) bool
+        -isDigit(c) bool
+        -performOperation(op) bool
+    }
+        </div>
+
+        <h3>Algorithm Flow</h3>
+        <div class="mermaid">
+flowchart TD
+    A["Input: '8 9 * 9 -'"] --> B[Initialize Stack]
+    B --> C[Read Token]
+    C --> D{Token Type?}
+    D -->|Digit| E[Push to Stack]
+    E --> C
+    D -->|Operator| F[Pop 2 operands]
+    F --> G{Stack >= 2?}
+    G -->|No| H[Error]
+    G -->|Yes| I[Calculate]
+    I --> J[Push result]
+    J --> C
+    D -->|Space| C
+    D -->|End| K{Stack == 1?}
+    K -->|Yes| L[Return result]
+    K -->|No| H
+
+    style L fill:#c8e6c9
+    style H fill:#ffcdd2
+        </div>
+
+        <h3>Stack Visualization: "8 9 * 9 -"</h3>
+        <div class="mermaid">
+flowchart LR
+    subgraph "Step 1"
+        S1["[8]"]
+    end
+    subgraph "Step 2"
+        S2["[8, 9]"]
+    end
+    subgraph "Step 3: *"
+        S3["pop 9,8 → 72"]
+        S3b["[72]"]
+    end
+    subgraph "Step 4"
+        S4["[72, 9]"]
+    end
+    subgraph "Step 5: -"
+        S5["pop 9,72 → 63"]
+        S5b["[63] ✓"]
+    end
+
+    S1 --> S2 --> S3 --> S3b --> S4 --> S5 --> S5b
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>5. Exercise 02: PmergeMe (Ford-Johnson Algorithm)</h2>
+
+        <h3>Class Architecture</h3>
+        <div class="mermaid">
+classDiagram
+    class PmergeMe {
+        -std::vector~int~ _vecOriginal
+        -std::vector~int~ _vec
+        -std::deque~int~ _deq
+        -double _vecTime
+        -double _deqTime
+        +parseInput(argc, argv) bool
+        +sort() void
+        +displayBefore() void
+        +displayAfter() void
+        +displayTimes() void
+        -fordJohnsonVector(arr) void
+        -fordJohnsonDeque(arr) void
+        -generateJacobsthalSequence(n) vector
+        -generateInsertionOrder(size) vector
+        -binarySearchInsert(sorted, value, end) iterator
+    }
+        </div>
+
+        <h3>Ford-Johnson Algorithm Overview</h3>
+        <div class="mermaid">
+flowchart TD
+    subgraph "Phase 1: Pairing"
+        A["Input: [3, 5, 9, 7, 4]"] --> B[Create pairs]
+        B --> C["Pairs: (5,3), (9,7)"]
+        C --> D["Straggler: 4"]
+    end
+
+    subgraph "Phase 2: Recursive Sort"
+        C --> E["Main chain: [5, 9]"]
+        E --> F["Recursively sort → [5, 9]"]
+    end
+
+    subgraph "Phase 3: Build Chain"
+        F --> G["Pend: [3, 7]"]
+        G --> H["Init: [3] + [5, 9] = [3, 5, 9]"]
+    end
+
+    subgraph "Phase 4: Insert Remaining"
+        H --> I["Insert 7 → [3, 5, 7, 9]"]
+        I --> J["Insert straggler 4"]
+        J --> K["Final: [3, 4, 5, 7, 9]"]
+    end
+
+    style K fill:#c8e6c9
+        </div>
+
+        <h3>Jacobsthal Numbers</h3>
+        <div class="note">
+            <strong>Jacobsthal Sequence:</strong> J(n) = J(n-1) + 2×J(n-2)<br>
+            <strong>Values:</strong> 0, 1, 1, 3, 5, 11, 21, 43, 85...<br>
+            <strong>Purpose:</strong> Determines optimal insertion order to minimize comparisons
+        </div>
+
+        <div class="mermaid">
+flowchart LR
+    subgraph "Insertion Order for 6 pend elements"
+        O1["b₁"] --> O2["b₃"] --> O3["b₂"] --> O4["b₅"] --> O5["b₄"] --> O6["b₆"]
+    end
+
+    subgraph "Groups by Jacobsthal"
+        G1["Group 1: b₁"]
+        G2["Group 2: b₃, b₂"]
+        G3["Group 3: b₅, b₄"]
+        G4["Remaining: b₆"]
+    end
+        </div>
+
+        <h3>Binary Search Insertion</h3>
+        <div class="mermaid">
+flowchart TD
+    A["Sorted: [3, 5, 9]"] --> B["Insert: 7"]
+    B --> C["Binary search"]
+    C --> D["left=0, right=3, mid=1"]
+    D --> E["arr[1]=5 < 7 → left=2"]
+    E --> F["left=2, right=3, mid=2"]
+    F --> G["arr[2]=9 >= 7 → right=2"]
+    G --> H["Insert at position 2"]
+    H --> I["Result: [3, 5, 7, 9]"]
+
+    style I fill:#c8e6c9
+        </div>
+
+        <h3>Vector vs Deque Performance</h3>
+        <div class="mermaid">
+flowchart TB
+    subgraph "std::vector"
+        V1[Contiguous Memory]
+        V2[Cache-Friendly]
+        V3["Typically faster for Ford-Johnson"]
+    end
+
+    subgraph "std::deque"
+        D1[Segmented Memory]
+        D2[Less cache-friendly]
+        D3["Slower for this algorithm"]
+    end
+        </div>
+
+        <pre>
+std::vector Memory Layout:
+┌───┬───┬───┬───┬───┐
+│ 3 │ 5 │ 9 │ 7 │ 4 │  ← Contiguous
+└───┴───┴───┴───┴───┘
+
+std::deque Memory Layout:
+┌─────────┐   ┌─────────┐
+│ Block 0 │ → │ Block 1 │  ← Segmented
+│ [3,5,9] │   │ [7,4,_] │
+└─────────┘   └─────────┘
+        </pre>
+    </div>
+
+    <div class="section">
+        <h2>6. Complete Example Walkthrough</h2>
+
+        <h3>Sorting [3, 5, 9, 7, 4]</h3>
+        <div class="mermaid">
+flowchart TD
+    subgraph "Step 1: Input"
+        S1["[3, 5, 9, 7, 4]"]
+    end
+
+    subgraph "Step 2: Pair & Compare"
+        S1 --> S2a["(3,5) → (5,3) larger first"]
+        S1 --> S2b["(9,7) → (9,7) larger first"]
+        S1 --> S2c["Straggler: 4"]
+    end
+
+    subgraph "Step 3: Extract Main Chain"
+        S2a --> S3["Main: [5, 9]"]
+        S2b --> S3
+    end
+
+    subgraph "Step 4: Recursively Sort Main"
+        S3 --> S4a["Pair: (9,5)"]
+        S4a --> S4b["Main: [9]"]
+        S4b --> S4c["Pend: [5]"]
+        S4c --> S4d["Sorted: [5, 9]"]
+    end
+
+    subgraph "Step 5: Build Initial Result"
+        S4d --> S5a["Pairs now ordered: (5,3), (9,7)"]
+        S5a --> S5b["Pend: [3, 7]"]
+        S5b --> S5c["Initial: [3] + [5,9] = [3,5,9]"]
+    end
+
+    subgraph "Step 6: Insert Remaining Pend"
+        S5c --> S6a["Insert 7 at pos 2"]
+        S6a --> S6b["[3, 5, 7, 9]"]
+    end
+
+    subgraph "Step 7: Insert Straggler"
+        S6b --> S7a["Insert 4 at pos 1"]
+        S7a --> S7b["[3, 4, 5, 7, 9] ✓"]
+    end
+
+    style S7b fill:#c8e6c9
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>7. Complexity Summary</h2>
+        <table>
+            <tr>
+                <th>Container</th>
+                <th>Access</th>
+                <th>Search</th>
+                <th>Insert</th>
+                <th>Delete</th>
+            </tr>
+            <tr>
+                <td><code>std::map</code></td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+                <td>O(log n)</td>
+            </tr>
+            <tr>
+                <td><code>std::stack</code></td>
+                <td>O(1) top</td>
+                <td>N/A</td>
+                <td>O(1) push</td>
+                <td>O(1) pop</td>
+            </tr>
+            <tr>
+                <td><code>std::vector</code></td>
+                <td>O(1)</td>
+                <td>O(n) / O(log n)*</td>
+                <td>O(n) mid</td>
+                <td>O(n) mid</td>
+            </tr>
+            <tr>
+                <td><code>std::deque</code></td>
+                <td>O(1)</td>
+                <td>O(n) / O(log n)*</td>
+                <td>O(1) ends</td>
+                <td>O(1) ends</td>
+            </tr>
+        </table>
+        <p>* O(log n) with binary search on sorted container</p>
+    </div>
+
+    <div class="section">
+        <h2>8. Orthodox Canonical Form</h2>
+        <div class="mermaid">
+classDiagram
+    class CanonicalClass {
+        +CanonicalClass() Default Constructor
+        +CanonicalClass(const CanonicalClass&) Copy Constructor
+        +operator=(const CanonicalClass&) Copy Assignment
+        +~CanonicalClass() Destructor
+    }
+        </div>
+        <div class="success">
+            All classes in Module 09 (BitcoinExchange, RPN, PmergeMe) implement the Orthodox Canonical Form.
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true }
+        });
+    </script>
+</body>
+</html>
