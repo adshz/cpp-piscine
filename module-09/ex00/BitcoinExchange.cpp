@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/07 13:36:54 by szhong            #+#    #+#             */
+/*   Updated: 2026/02/07 13:36:55 by szhong           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "BitcoinExchange.hpp"
 #include <fstream>
 #include <sstream>
@@ -24,6 +35,29 @@ std::string BitcoinExchange::trim(const std::string& str) const {
 	size_t last = str.find_last_not_of(" \t\r\n");
 	return str.substr(first, last - first + 1);
 }
+
+/* another way to write this trim function 
+
+std::string BitcoinExchange::trim(const std::string& str) const {
+
+std::string::const_iterator first = str.begin();
+std::string::const_iterator last = str.end();
+
+// Find first non-whitespace
+while (first != last && std::isspace(*first)) 
+	++first;
+
+// find last non-whitespace
+if (first != last) {
+	--last;
+	while (last !=first && std::isspace(*last))
+		--last;
+	++last;// Point past the last character we want
+}
+
+}
+
+*/
 
 bool BitcoinExchange::isValidDate(const std::string& date) const {
 	if (date.length() != 10)
@@ -116,6 +150,7 @@ double BitcoinExchange::getExchangeRate(const std::string& date) const {
 	return it->second;
 }
 
+/* Original version - commented out for comparison
 void BitcoinExchange::processInputFile(const std::string& filename) {
 	std::ifstream file(filename.c_str());
 	if (!file.is_open()) {
@@ -173,4 +208,72 @@ void BitcoinExchange::processInputFile(const std::string& filename) {
 	}
 
 	file.close();
+}
+*/
+
+// ============================================================================
+// Cleaner version using fail-fast pattern with helper functions
+// ============================================================================
+
+bool BitcoinExchange::printError(const std::string& msg) const {
+	std::cerr << "Error: " << msg << std::endl;
+	return false;
+}
+
+bool BitcoinExchange::processLine(const std::string& line) {
+	// Guard 1: Check pipe separator exists
+	size_t pipePos = line.find('|');
+	if (pipePos == std::string::npos)
+		return printError("bad input => " + line);
+
+	// Guard 2: Validate date format
+	std::string date = trim(line.substr(0, pipePos));
+	if (!isValidDate(date))
+		return printError("bad input => " + date);
+
+	// Guard 3: Validate value format
+	std::string valueStr = trim(line.substr(pipePos + 1));
+	double value;
+	if (!isValidValue(valueStr, value))
+		return printError("bad input => " + line);
+
+	// Guard 4: Value must be non-negative
+	if (value < 0)
+		return printError("not a positive number.");
+
+	// Guard 5: Value must not exceed 1000
+	if (value > 1000)
+		return printError("too large a number.");
+
+	// Guard 6: Date must exist in database range
+	double rate = getExchangeRate(date);
+	if (rate < 0)
+		return printError("date is before database start.");
+
+	// Happy path: all validations passed
+	std::cout << date << " => " << value << " = " << (value * rate) << std::endl;
+	return true;
+}
+
+void BitcoinExchange::processInputFile(const std::string& filename) {
+	std::ifstream file(filename.c_str());
+	if (!file.is_open()) {
+		std::cerr << "Error: could not open file." << std::endl;
+		return;
+	}
+
+	std::string line;
+
+	// Skip header line if it exists
+	if (std::getline(file, line)) {
+		// Only skip if it looks like a header
+		if (line.find("date") == std::string::npos || line.find("value") == std::string::npos) {
+			processLine(line);  // Not a header, process it
+		}
+	}
+
+	// Process remaining lines
+	while (std::getline(file, line)) {
+		processLine(line);
+	}
 }

@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/07 13:37:10 by szhong            #+#    #+#             */
+/*   Updated: 2026/02/07 13:37:11 by szhong           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef BITCOINEXCHANGE_HPP
 #define BITCOINEXCHANGE_HPP
 
@@ -21,6 +32,10 @@ private:
 	bool isValidValue(const std::string& value, double& result) const;
 	double getExchangeRate(const std::string& date) const;
 	std::string trim(const std::string& str) const;
+
+	// Cleaner version helpers
+	bool printError(const std::string& msg) const;
+	bool processLine(const std::string& line);
 };
 
 #endif
