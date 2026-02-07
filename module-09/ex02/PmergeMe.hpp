@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PmergeMe.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/07 13:32:05 by szhong            #+#    #+#             */
+/*   Updated: 2026/02/07 13:32:12 by szhong           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef PMERGEME_HPP
 #define PMERGEME_HPP
 
@@ -32,9 +43,5 @@ private:
 
 	std::vector<size_t> generateJacobsthalSequence(size_t n) const;
 	std::vector<size_t> generateInsertionOrder(size_t pendSize) const;
-
-	template<typename Container>
-	typename Container::iterator binarySearchInsert(Container& sorted, int value, typename Container::iterator end);
 };
-
 #endif

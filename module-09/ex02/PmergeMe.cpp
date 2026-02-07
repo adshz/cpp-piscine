@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PmergeMe.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: szhong <szhong@student.42london.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/07 13:31:49 by szhong            #+#    #+#             */
+/*   Updated: 2026/02/07 13:31:53 by szhong           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "PmergeMe.hpp"
 #include <iostream>
 #include <sstream>
@@ -93,21 +104,6 @@ std::vector<size_t> PmergeMe::generateInsertionOrder(size_t pendSize) const {
 	return order;
 }
 
-template<typename Container>
-typename Container::iterator PmergeMe::binarySearchInsert(Container& sorted, int value, typename Container::iterator end) {
-	typename Container::iterator left = sorted.begin();
-	typename Container::iterator right = end;
-
-	while (left < right) {
-		typename Container::iterator mid = left + (right - left) / 2;
-		if (*mid < value)
-			left = mid + 1;
-		else
-			right = mid;
-	}
-	return left;
-}
-
 void PmergeMe::fordJohnsonVector(std::vector<int>& arr) {
 	size_t n = arr.size();
 	if (n <= 1)
@@ -162,13 +158,13 @@ void PmergeMe::fordJohnsonVector(std::vector<int>& arr) {
 		if (idx == 0) continue;
 		if (idx < pend.size()) {
 			int val = pend[idx];
-			std::vector<int>::iterator pos = binarySearchInsert(sorted, val, sorted.end());
+			std::vector<int>::iterator pos = std::lower_bound(sorted.begin(), sorted.end(), val);
 			sorted.insert(pos, val);
 		}
 	}
 
 	if (hasStraggler) {
-		std::vector<int>::iterator pos = binarySearchInsert(sorted, straggler, sorted.end());
+		std::vector<int>::iterator pos = std::lower_bound(sorted.begin(), sorted.end(), straggler);
 		sorted.insert(pos, straggler);
 	}
 
@@ -229,13 +225,13 @@ void PmergeMe::fordJohnsonDeque(std::deque<int>& arr) {
 		if (idx == 0) continue;
 		if (idx < pend.size()) {
 			int val = pend[idx];
-			std::deque<int>::iterator pos = binarySearchInsert(sorted, val, sorted.end());
+			std::deque<int>::iterator pos = std::lower_bound(sorted.begin(), sorted.end(), val);
 			sorted.insert(pos, val);
 		}
 	}
 
 	if (hasStraggler) {
-		std::deque<int>::iterator pos = binarySearchInsert(sorted, straggler, sorted.end());
+		std::deque<int>::iterator pos = std::lower_bound(sorted.begin(), sorted.end(), straggler);
 		sorted.insert(pos, straggler);
 	}
 
